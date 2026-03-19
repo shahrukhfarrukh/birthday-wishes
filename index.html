@@ -2,7 +2,8 @@
 <html xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <title>HBD</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes" />
+    <title>Happy Birthday Rimsha</title>
     <link type="text/css" rel="stylesheet" href="./file/default.css" />
     <script type="text/javascript" src="./file/jquery.min.js"></script>
     <script type="text/javascript" src="./file/jscex.min.js"></script>
@@ -30,12 +31,55 @@
     <script>
       function playAudio() {
         var audio = document.getElementById("myAudio");
-        audio.play();
+        if (audio) audio.play();
+      }
+      function playVideo() {
+        var section = document.getElementById("video-section");
+        var video = document.getElementById("myVideo");
+        if (section) section.classList.remove("video-section-hidden");
+        if (video) {
+          video.play().catch(function () {});
+        }
+      }
+      function scrollToVideo() {
+        var section = document.getElementById("video-section");
+        if (section) section.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+      function toggleVideoFullscreen() {
+        var video = document.getElementById("myVideo");
+        var container = document.querySelector(".video-container");
+        if (!video) return;
+        if (!document.fullscreenElement) {
+          (container && container.requestFullscreen ? container : video).requestFullscreen();
+        } else {
+          if (document.exitFullscreen) document.exitFullscreen();
+        }
+      }
+      function startCelebration() {
+        var el = document.getElementById("celebration");
+        if (!el) return;
+        var symbols = ["✨", "🎉", "🌟", "💫", "❤️", "🎂", "🥳", "💕", "⭐", "🌸"];
+        el.innerHTML = "";
+        for (var i = 0; i < 45; i++) {
+          var p = document.createElement("span");
+          p.className = "celebration-particle";
+          p.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+          p.style.left = Math.random() * 100 + "%";
+          p.style.animationDelay = Math.random() * 2 + "s";
+          p.style.animationDuration = (2 + Math.random() * 2) + "s";
+          el.appendChild(p);
+        }
+        el.classList.remove("celebration-off");
+      }
+      function stopCelebration() {
+        var el = document.getElementById("celebration");
+        if (el) el.classList.add("celebration-off");
       }
     </script>
   </head>
   <body>
     <div id="main">
+      <div id="responsive-wrap">
       <div id="error">
         <a
           href="http://www.google.cn/chrome/intl/zh-CN/landing_chrome.html?hl=zh-CN&brand=CHMI"
@@ -43,33 +87,43 @@
         >
         (<a href="http://firefox.com.cn/download/">Firefox</a>)
       </div>
-      <audio autoplay="autoplay" height="100" width="100" id="myAudio">
-        <source src="aud.mp3" type="audio/mp3" />
-        <embed height="100" width="100" src="aud.mp3" />
+      <audio autoplay loop height="0" width="0" id="myAudio">
+        <source src="audio.mp3" type="audio/mpeg" />
       </audio>
+      <div id="celebration" class="celebration-off" aria-hidden="true"></div>
       <div id="wrap">
         <div id="text">
           <div id="code">
+            <span class="say">Happy Birthday Rimsha, May you have many more years of happiness and health 💕</span><br />
             <span class="say">Wishing you a beautiful day 💫</span><br />
             <span class="say">Happy Birthday 🎉</span><br />
             <span class="say">May you be blessed with joy and peace 🌟</span
             ><br />
             <span class="say"
-              >And may your heart be filled with happiness 💕</span
+              >may your heart be filled with happiness 💕</span
             ><br />
-            <span class="say">You are truly appreciated ❤️</span><br />
+            
             <span class="say">Wishing you love and smiles always 🥰</span><br />
             <span class="say">Hope your day is as amazing as you are 🎂✨</span
             ><br />
+            <span class="say">Happy Birthday Rimsha</span><br />
           </div>
         </div>
         <div id="clock-box">
-          <span id="clock">577 days 0 hours 0 minutes 0 seconds</span>
+          <!-- <span id="clock">577 days 0 hours 0 minutes 0 seconds</span> -->
           <!-- Change to "6940 days..." if needed -->
         </div>
         <canvas id="canvas" width="1100" height="680"></canvas>
       </div>
     </div>
+    </div>
+
+    <section id="video-section" class="video-section-hidden">
+      <div class="video-container">
+        <video id="myVideo" src="video.mp4" playsinline loop controls muted></video>
+        <!-- <button type="button" id="video-fullscreen-btn" class="video-fullscreen-btn" title="Full screen">⛶ Full screen</button> -->
+      </div>
+    </section>
 
     <script>
       (function () {
@@ -78,6 +132,12 @@
         if (!canvas[0].getContext) {
           $("#error").show();
           return false;
+        }
+
+        var audioEl = document.getElementById("myAudio");
+        if (audioEl) {
+          audioEl.loop = true;
+          audioEl.play().catch(function () {});
         }
 
         var width = canvas.width();
@@ -194,20 +254,21 @@
             canvas.toggleClass("hand", seed.hover(x, y));
           });
 
+        var animDelay = 24;
         var seedAnimate = eval(
           Jscex.compile("async", function () {
             seed.draw();
             while (hold) {
-              $await(Jscex.Async.sleep(10));
+              $await(Jscex.Async.sleep(animDelay));
             }
             while (seed.canScale()) {
               seed.scale(0.95);
-              $await(Jscex.Async.sleep(10));
+              $await(Jscex.Async.sleep(animDelay));
             }
             while (seed.canMove()) {
               seed.move(0, 2);
               foot.draw();
-              $await(Jscex.Async.sleep(10));
+              $await(Jscex.Async.sleep(animDelay));
             }
           })
         );
@@ -216,7 +277,7 @@
           Jscex.compile("async", function () {
             do {
               tree.grow();
-              $await(Jscex.Async.sleep(10));
+              $await(Jscex.Async.sleep(animDelay));
             } while (tree.canGrow());
           })
         );
@@ -225,7 +286,7 @@
           Jscex.compile("async", function () {
             do {
               tree.flower(2);
-              $await(Jscex.Async.sleep(10));
+              $await(Jscex.Async.sleep(animDelay));
             } while (tree.canFlower());
           })
         );
@@ -235,7 +296,7 @@
             tree.snapshot("p1", 240, 0, 610, 680);
             while (tree.move("p1", 500, 0)) {
               foot.draw();
-              $await(Jscex.Async.sleep(10));
+              $await(Jscex.Async.sleep(animDelay));
             }
             foot.draw();
             tree.snapshot("p2", 500, 0, 610, 680);
@@ -244,16 +305,24 @@
               .parent()
               .css("background", "url(" + tree.toDataURL("image/png") + ")");
             canvas.css("background", "#ffe");
-            $await(Jscex.Async.sleep(300));
+            $await(Jscex.Async.sleep(400));
             canvas.css("background", "none");
           })
         );
 
-        var textAnimate = eval(
-          Jscex.compile("async", function () {
-            $("#code").show().typewriter();
-          })
-        );
+        function runTextAndThenScroll() {
+          startCelebration();
+          $("#code").show().typewriter({
+            speed: 150,
+            onComplete: function () {
+              setTimeout(function () {
+                playVideo();
+                scrollToVideo();
+                stopCelebration();
+              }, 3000);
+            }
+          });
+        }
 
         var runAsync = eval(
           Jscex.compile("async", function () {
@@ -261,11 +330,14 @@
             $await(growAnimate());
             $await(flowAnimate());
             $await(moveAnimate());
-            textAnimate().start();
+            runTextAndThenScroll();
           })
         );
 
         runAsync().start();
+
+        // var fullscreenBtn = document.getElementById("video-fullscreen-btn");
+        // if (fullscreenBtn) fullscreenBtn.addEventListener("click", toggleVideoFullscreen);
       })();
     </script>
   </body>
